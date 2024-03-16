@@ -1,0 +1,32 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.editor-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row; /* Initially set as row */
+    position: relative;
+}
+
+.code-editor {
+    flex-basis: 45vw;
+    height: 50vh;
+    border: 1px solid green;
+}
+
+#result-panel {
+    width: 100%;
+    min-height: 300px;
+    border-top: 1px solid #ccc;
+    padding: 10px;
+}
+
+/* Media query for responsiveness */
+@media (max-width: 768px) {
+    .editor-container {
+        flex-direction: row; /* Change to column layout on smaller screens */
+    }
+}
