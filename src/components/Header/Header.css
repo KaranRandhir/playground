@@ -1,0 +1,30 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.dark-header {
+    background-color: #333; /* Dark background color */
+    color: #fff; /* Light text color */
+    padding: 10px 20px; /* Add padding for space */
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-between; /* Align items horizontally */
+    align-items: center; /* Align items vertically */
+}
+
+.header-title {
+    font-size: 20px; /* Adjust title font size */
+}
+
+.header-buttons button {
+    background-color: greenyellow; /* Dark button background color */
+    color: black; /* Light button text color */
+    border: none; /* Remove button borders */
+    padding: 8px 15px; /* Add padding for space */
+    margin-left: 10px; /* Add space between buttons */
+    cursor: pointer; /* Add cursor pointer on hover */
+}
+
+.header-buttons button:hover {
+    background-color: #777; /* Darken button color on hover */
+}
