@@ -3,13 +3,14 @@ import { useEffect, useRef, useState } from "react";
 import "./Playground.css";
 import { transform } from "@babel/standalone";
 import plugin from "babel-plugin-transform-remove-strict-mode"; // used for removing on strict which is added by babel by default
+import lineNumberPlugin from "babel-plugin-console-source"
 import "./script.js";
 import jsIcon from "../../assets/icons/javascript-icon.png";
 import cssIcon from "../../assets/icons/css-icon.png";
 import htmlIcon from "../../assets/icons/html-icon.png";
 import formatCodeIcon from "../../assets/icons/align-right.png";
 import { DEFAULT_CSS, DEFAULT_HTML, DEFAULT_JS,RIGHT_PANEL_MODES } from "./constants.js";
-import { overrideConsoleLog } from "../../utils/utils.js";
+import { customConsolePlugin, overrideConsoleLog } from "../../utils/utils.js";
 function Playground() {
   const [js, updateJs] = useState(DEFAULT_JS);
   const [html, updateHtml] = useState(DEFAULT_HTML);
@@ -52,12 +53,16 @@ function Playground() {
   const transpileCode = (js) => {
     const transpiledCode =  transform(js, {
       presets: ["env"],
-      plugins: [plugin],
+      plugins: [plugin,customConsolePlugin],
       sourceMaps: "both",
       sourceType: "script",
-      sourceFileName:"js"
-    }).code;
-    return transpiledCode
+      sourceFileName:"js",
+      filename:"js"
+    });
+
+    // const sourceMap = transpiledCode.map
+
+       return transpiledCode.code
   };
 
   const onHtmlEditorMount = (editor) => {
@@ -80,7 +85,7 @@ function Playground() {
 
   const codeEditors = {
     javascript: "jsEditor",
-    html: "htmlEditor",
+    html: "htmlEditor",   
     css: "cssEditor",
   };
 
@@ -229,6 +234,7 @@ function Playground() {
           className={`code-editor ${editorMode !== "javascript" && "hidden"}`}
         >
           <Editor
+            
             options={{ lineNumbersMinChars: 2 }}
             onChange={(value) => {
               updateJs(value);
@@ -243,7 +249,7 @@ function Playground() {
 
         <div className={`code-editor ${editorMode !== "css" && "hidden"}`}>
           <Editor
-            options={{ lineNumbersMinChars: 2,scrollBeyondLastLine:"false" }}
+            options={{ lineNumbersMinChars: 2 }}
             onChange={(value) => updateCss(value)}
             defaultValue={DEFAULT_CSS}
             theme="vs-dark"
@@ -275,7 +281,7 @@ function Playground() {
         }
         {
           <div className={`logs ${rightPanelMode !== RIGHT_PANEL_MODES.LOGS && "hidden"}`}>
-
+            <div className="clear-logs" onClick={()=>setLogs([])}>clear logs</div>
             {logs.map(item=><div className={item.type}>{item.msg}</div>)}
 
           </div>

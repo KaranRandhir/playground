@@ -26,10 +26,11 @@ const overrideConsoleLog = () => {
         originalError.apply(console, arguments);
       };
       console.log = function (...args) {
+        const logString = args.reduce((acc,item)=>{
+          return acc + " " + item
+        },"")
+        add({msg:logString,type:"log"})
         
-        args.forEach(arg=>{
-          add({msg:arg,type:"log"})
-         });
         originalLog.apply(console, args);
       };
       console.warn = function (...args) {
@@ -46,4 +47,43 @@ const overrideConsoleLog = () => {
       };
       
 }
-export {setLocalStorage,getLocalStorage,overrideConsoleLog}
+
+const customConsolePlugin =  {
+  visitor: {
+      CallExpression(path, state) {
+
+          const opts = state;
+   
+
+          if (path.node.callee.object &&
+              path.node.callee.object.name === 'console' &&
+              path.node.callee.property.name !== 'table') {
+
+              let file = state.file.opts.filename;
+
+              if(typeof opts.resolveFile === 'function') {
+                  file = opts.resolveFile(file);
+              } else if (!opts || opts.segments !== 0) {
+                  file = state.file.opts.filename.split(((opts.splitSegment) ? opts.splitSegment : '/'));
+                  let segs = file.slice(Math.max(file.length - opts.segments));
+                  file = segs.join('/');
+              }
+
+              let value = `${file} (${path.node.loc.start.line}:${path.node.loc.start.column})`
+
+              if(path.node.arguments[0].value !== value) {
+                  path.node.arguments.unshift({
+                      type: 'StringLiteral',
+                      value
+                  });
+              }
+
+          }
+
+      }
+  }
+};
+
+//plugin not working with console error 
+
+export {setLocalStorage,getLocalStorage,overrideConsoleLog,customConsolePlugin}
